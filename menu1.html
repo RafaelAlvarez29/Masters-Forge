@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Adventure Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Test de carga de iconos */
+        .test-icon { display: none; }
+    </style>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap');
+    
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        font-family: 'Open Sans', sans-serif;
+        overflow: hidden;
+    }
+
+    .principal {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .boton-container {
+        flex: 1;
+        display: flex;
+        transition: flex 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .boton-base {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        color: white;
+        text-align: center;
+        transition: all 0.4s ease;
+        overflow: hidden;
+    }
+
+    .botonizq {
+        background-image: url('https://www.nowyouroll.com/wp-content/uploads/2021/10/Guia-de-explorador-dnd-5e.png');
+    }
+
+    .botonder {
+        background-image: url('assets/images/menu/imgizq.png');
+    }
+
+    /* Overlay difuminado */
+    .boton-base::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%);
+        backdrop-filter: blur(2px);
+        transition: all 0.4s ease;
+        z-index: 1;
+    }
+
+    /* Partículas mágicas */
+    .boton-base::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 30%, rgba(255,215,0,0.1) 1px, transparent 1px),
+            radial-gradient(circle at 80% 70%, rgba(138,43,226,0.1) 1px, transparent 1px),
+            radial-gradient(circle at 40% 80%, rgba(0,191,255,0.1) 1px, transparent 1px),
+            radial-gradient(circle at 90% 20%, rgba(255,105,180,0.1) 1px, transparent 1px);
+        background-size: 100px 100px, 150px 150px, 200px 200px, 120px 120px;
+        opacity: 0;
+        animation: floatParticles 8s linear infinite;
+        transition: opacity 0.4s ease;
+        z-index: 2;
+    }
+
+    @keyframes floatParticles {
+        0% { transform: translateY(100vh) rotate(0deg); }
+        100% { transform: translateY(-100vh) rotate(360deg); }
+    }
+
+    .boton-content {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.4s ease;
+    }
+
+    .icon-container {
+        font-size: 4rem;
+        margin-bottom: 10px;
+        filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        transition: all 0.4s ease;
+    }
+
+    .main-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        margin: 0;
+        transition: all 0.4s ease;
+    }
+
+    .subtitle {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 400;
+        opacity: 0.85;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+        margin: 0;
+        font-style: italic;
+        transition: all 0.4s ease;
+    }
+
+    /* Efectos hover */
+    .principal:hover .boton-container:nth-child(1):hover {
+        flex: 1.7;
+    }
+
+    .principal:hover .boton-container:nth-child(2):hover {
+        flex: 1.7;
+    }
+
+    .principal:hover .boton-container:nth-child(1):not(:hover) {
+        flex: 0.3;
+    }
+
+    .principal:hover .boton-container:nth-child(2):not(:hover) {
+        flex: 0.3;
+    }
+
+    /* Hover específico botón izquierdo */
+    .botonizq:hover::before {
+        background: linear-gradient(135deg, rgba(138,43,226,0.3) 0%, rgba(75,0,130,0.2) 100%);
+        backdrop-filter: blur(0px);
+    }
+
+    .botonizq:hover::after {
+        opacity: 1;
+        animation-duration: 4s;
+    }
+
+    .botonizq:hover .boton-content {
+        transform: scale(1.05);
+    }
+
+    .botonizq:hover .icon-container {
+        color: #9d4edd;
+        filter: drop-shadow(0 0 20px rgba(157,78,221,0.6));
+        /*transform: rotate(5deg);*/
+    }
+
+    .botonizq:hover .main-title {
+        color: #e0aaff;
+        text-shadow: 3px 3px 12px rgba(157,78,221,0.8);
+        transform: translateY(-5px);
+    }
+
+    .botonizq:hover .subtitle {
+        opacity: 1;
+        color: #c77dff;
+        transform: translateY(-3px);
+    }
+
+    /* Hover específico botón derecho */
+    .botonder:hover::before {
+        background: linear-gradient(135deg, rgba(255,140,0,0.3) 0%, rgba(220,20,60,0.2) 100%);
+        backdrop-filter: blur(0px);
+    }
+
+    .botonder:hover::after {
+        opacity: 1;
+        animation-duration: 4s;
+        background-image: 
+            radial-gradient(circle at 30% 40%, rgba(255,69,0,0.15) 1px, transparent 1px),
+            radial-gradient(circle at 70% 60%, rgba(255,215,0,0.15) 1px, transparent 1px),
+            radial-gradient(circle at 50% 90%, rgba(220,20,60,0.15) 1px, transparent 1px),
+            radial-gradient(circle at 90% 10%, rgba(255,140,0,0.15) 1px, transparent 1px);
+    }
+
+    .botonder:hover .boton-content {
+        transform: scale(1.05);
+    }
+
+    .botonder:hover .icon-container {
+        color: #ff8c00;
+        filter: drop-shadow(0 0 20px rgba(255,140,0,0.8));
+        transform: rotate(-5deg);
+    }
+
+    .botonder:hover .main-title {
+        color: #ffd700;
+        text-shadow: 3px 3px 12px rgba(255,140,0,0.8);
+        transform: translateY(-5px);
+    }
+
+    .botonder:hover .subtitle {
+        opacity: 1;
+        color: #ffb347;
+        transform: translateY(-3px);
+    }
+
+    /* Animación de pulsación sutil */
+    @keyframes gentlePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+
+    .boton-base:hover {
+        animation: gentlePulse 2s ease-in-out infinite;
+    }
+
+    /* Responsive Design Completo */
+    @media (max-width: 768px) {
+        /* Cambiar a layout vertical en móvil */
+        .principal {
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .boton-container {
+            flex: 1;
+            min-height: 50vh;
+        }
+        
+        /* Ajustar efectos hover para móvil */
+        .principal:hover .boton-container:nth-child(1):hover {
+            flex: 1.3;
+        }
+
+        .principal:hover .boton-container:nth-child(2):hover {
+            flex: 1.3;
+        }
+
+        .principal:hover .boton-container:nth-child(1):not(:hover) {
+            flex: 0.7;
+        }
+
+        .principal:hover .boton-container:nth-child(2):not(:hover) {
+            flex: 0.7;
+        }
+        
+        /* Ajustar tamaños de texto y elementos */
+        .main-title {
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 0.95rem;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        .icon-container {
+            font-size: 3.5rem;
+        }
+        
+        .boton-content {
+            gap: 12px;
+            padding: 20px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Móviles muy pequeños */
+        .main-title {
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .subtitle {
+            font-size: 0.85rem;
+        }
+        
+        .icon-container {
+            font-size: 3rem;
+        }
+        
+        .boton-content {
+            gap: 10px;
+            padding: 15px;
+        }
+        
+        /* Reducir efectos hover en móviles pequeños */
+        .boton-base:hover {
+            animation: none;
+        }
+        
+        .botonizq:hover .boton-content,
+        .botonder:hover .boton-content {
+            transform: scale(1.02);
+        }
+    }
+    
+    /* Tablets en landscape */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .main-title {
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+        }
+        
+        .icon-container {
+            font-size: 3.5rem;
+        }
+    }
+    
+    /* Dispositivos táctiles - mejorar área de toque */
+    @media (hover: none) and (pointer: coarse) {
+        .boton-base {
+            /* Activar efectos al tocar en lugar de hover */
+            transition: all 0.3s ease;
+        }
+        
+        .boton-base:active::before {
+            opacity: 0.8;
+        }
+        
+        .boton-base:active .boton-content {
+            transform: scale(1.03);
+        }
+        
+        /* Mostrar las partículas ligeramente en móvil */
+        .boton-base::after {
+            opacity: 0.3;
+            animation: floatParticles 12s linear infinite;
+        }
+    }
+</style>
+
+<body>
+    <div class="principal">
+        <div class="boton-container">
+            <button class="boton-base botonizq" >
+                <div class="boton-content">
+                    <div class="icon-container">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h1 class="main-title">Mis Personajes</h1>
+                    <p class="subtitle">Crea, edita y gestiona tus héroes</p>
+                </div>
+            </button>
+        </div>
+        <div class="boton-container">
+            <button class="boton-base botonder" onclick="window.location.href='index.html'">
+                <div class="boton-content">
+                    <div class="icon-container">
+                        <i class="fas fa-dice-d20"></i>
+                    </div>
+                    <h1 class="main-title">Master's Forge</h1>
+                    <p class="subtitle">Herramientas para Forjar tu Aventura</p>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Efecto de sonido hover (opcional - descomenta si quieres sonidos)
+        /*
+        const buttons = document.querySelectorAll('.boton-base');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                // Aquí puedes agregar efectos de sonido
+                console.log('Hover effect triggered');
+            });
+        });
+        */
+
+        // Mejoras para dispositivos móviles
+        document.addEventListener('DOMContentLoaded', () => {
+            const containers = document.querySelectorAll('.boton-container');
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            const isTouchDevice = 'ontouchstart' in window;
+            
+            containers.forEach((container, index) => {
+                const button = container.querySelector('.boton-base');
+                
+                if (isTouchDevice) {
+                    // Efectos para dispositivos táctiles
+                    button.addEventListener('touchstart', () => {
+                        button.style.transform = 'scale(1.02)';
+                        
+                        // Activar efectos visuales en touch
+                        if (button.classList.contains('botonizq')) {
+                            button.style.filter = 'brightness(1.1) saturate(1.2)';
+                        } else {
+                            button.style.filter = 'brightness(1.1) saturate(1.2)';
+                        }
+                    });
+                    
+                    button.addEventListener('touchend', () => {
+                        setTimeout(() => {
+                            button.style.transform = 'scale(1)';
+                            button.style.filter = 'none';
+                        }, 200);
+                    });
+                } else {
+                    // Efectos para desktop
+                    container.addEventListener('mouseenter', () => {
+                        button.style.transform = 'scale(1.01)';
+                    });
+                    
+                    container.addEventListener('mouseleave', () => {
+                        button.style.transform = 'scale(1)';
+                    });
+                }
+            });
+            
+            // Ajustar efectos según orientación en móvil
+            if (isMobile) {
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        // Recalcular tamaños después del cambio de orientación
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                    }, 100);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
