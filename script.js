@@ -1424,6 +1424,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveHeaderBtn = document.getElementById('saveHeaderBtn'); if (saveHeaderBtn) { saveHeaderBtn.addEventListener('click', (e) => { e.stopPropagation(); saveHeaderChanges(); }); }
     tokenInfoEdit.querySelectorAll('input').forEach(input => { input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveHeaderChanges(); } else if (e.key === 'Escape') { const token = tokens.find(t => t.id === selectedTokenId); if (token) updateTokenInUI(token); tokenInfoView.style.display = 'block'; tokenInfoEdit.style.display = 'none'; } }); });
     function getCharacterLibrary() { return JSON.parse(localStorage.getItem(CHAR_LIB_STORE)) || []; }
+    const BESTIARY_STORE = 'dmArsenalBestiary';
+    let bestiary = JSON.parse(localStorage.getItem(BESTIARY_STORE)) || [];
     async function saveCharacterToLibrary(characterData) {
         // 1. Preguntar si se quiere guardar el personaje
         const wantsToSave = await showCustomModal({
@@ -2309,5 +2311,118 @@ document.addEventListener('DOMContentLoaded', () => {
         initiativeModal.classList.remove('open');
         showNotification('¡Iniciativas actualizadas con éxito!');
     }
+
+    // --- LÓGICA DEL BESTIARIO ---
+
+    // Variables temporales para las imágenes del modal
+    let tempCreatureImgPersonaje = null;
+    let tempCreatureImgDatos = null;
+
+    // Listeners para carga de archivos
+    document.getElementById('creatureImgPersonaje').addEventListener('change', async (e) => {
+        if (e.target.files[0]) tempCreatureImgPersonaje = await processImage(e.target.files[0]);
+    });
+    document.getElementById('creatureImgDatos').addEventListener('change', async (e) => {
+        if (e.target.files[0]) tempCreatureImgDatos = await processImage(e.target.files[0]);
+    });
+
+    // Abrir Modal
+    document.getElementById('openAddCreatureModalBtn').addEventListener('click', () => {
+        document.getElementById('creatureName').value = '';
+        tempCreatureImgPersonaje = null;
+        tempCreatureImgDatos = null;
+        document.getElementById('addCreatureModal').classList.add('open');
+    });
+
+    // Cancelar Modal
+    document.getElementById('cancelCreatureBtn').addEventListener('click', () => {
+        document.getElementById('addCreatureModal').classList.remove('open');
+    });
+
+    // Guardar Criatura
+    document.getElementById('saveCreatureBtn').addEventListener('click', () => {
+        const name = document.getElementById('creatureName').value.trim();
+        if (!name) {
+            showCustomModal({ title: 'Atención', message: 'El nombre es obligatorio.', type: 'warning' });
+            return;
+        }
+
+        const newCreature = {
+            id: Date.now(),
+            name: name,
+            imgPersonaje: tempCreatureImgPersonaje,
+            imgDatos: tempCreatureImgDatos
+        };
+
+        bestiary.push(newCreature);
+        localStorage.setItem(BESTIARY_STORE, JSON.stringify(bestiary));
+        renderBestiary();
+        document.getElementById('addCreatureModal').classList.remove('open');
+        showNotification(`¡${name} añadido al bestiario!`);
+    });
+
+    // Renderizar lista de miniaturas
+    function renderBestiary() {
+        const grid = document.getElementById('bestiaryGrid');
+        const filter = document.getElementById('searchBestiaryInput').value.toLowerCase();
+        grid.innerHTML = '';
+
+        const filtered = bestiary.filter(c => c.name.toLowerCase().includes(filter));
+
+        filtered.forEach(creature => {
+            const card = document.createElement('div');
+            card.className = 'saved-char-card';
+
+            // Prioridad de miniatura: Personaje > Datos > Vacío
+            const displayImg = creature.imgPersonaje || creature.imgDatos || '';
+            const imageStyle = displayImg ? `background-image: url(${displayImg});` : `background-color: var(--header-bg);`;
+
+            card.innerHTML = `
+            <div class="saved-char-preview">
+                <div class="preview-content" style="${imageStyle} background-size: cover;">${displayImg ? '' : '🐉'}</div>
+            </div>
+            <div class="saved-char-info">
+                <p class="saved-char-name">${creature.name}</p>
+            </div>
+            <button class="delete-saved-char-btn" onclick="deleteCreature(${creature.id}, event)">×</button>
+        `;
+
+            card.addEventListener('click', () => showCreatureInViewer(creature));
+            grid.appendChild(card);
+        });
+    }
+
+    // Mostrar en el visor inferior
+    function showCreatureInViewer(creature) {
+        const viewer = document.getElementById('bestiaryViewer');
+        const imgElement = document.getElementById('bestiaryFullImage');
+        document.getElementById('bestiaryViewerName').textContent = creature.name;
+
+        // En el visor priorizamos ver los Stats (Datos), si no hay, vemos el Personaje
+        imgElement.src = creature.imgDatos || creature.imgPersonaje || '';
+        viewer.style.display = 'block';
+    }
+
+    // Cerrar visor
+    document.getElementById('closeBestiaryViewerBtn').addEventListener('click', () => {
+        document.getElementById('bestiaryViewer').style.display = 'none';
+    });
+
+    // Eliminar criatura (Global para poder usarlo en el onclick)
+    window.deleteCreature = (id, event) => {
+        event.stopPropagation();
+        if (confirm("¿Eliminar esta criatura del bestiario?")) {
+            bestiary = bestiary.filter(c => c.id !== id);
+            localStorage.setItem(BESTIARY_STORE, JSON.stringify(bestiary));
+            renderBestiary();
+            document.getElementById('bestiaryViewer').style.display = 'none';
+        }
+    };
+
+    // Listener para el buscador
+    document.getElementById('searchBestiaryInput').addEventListener('input', renderBestiary);
+
+    // Llamada inicial al cargar
+    renderBestiary();
 
 });

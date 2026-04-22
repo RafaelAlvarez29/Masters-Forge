@@ -1208,6 +1208,38 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Vista 6: Bestiario -->
+                    <div id="right-view-bestiary" class="panel-view">
+                        <h3 class="view-title">Bestiario</h3>
+                        <div class="title-with-button">
+                            <input type="text" id="searchBestiaryInput" class="search-in-list-input"
+                                placeholder="Buscar criatura...">
+                            <button id="openAddCreatureModalBtn" class="add-item-btn" title="Añadir Criatura">+</button>
+                        </div>
+
+                        <!-- Contenedor con scroll para la lista de miniaturas -->
+                        <div id="bestiaryGrid" class="saved-characters-grid"
+                            style="max-height: 300px; overflow-y: auto; border-bottom: 1px solid var(--input-border); padding-bottom: 10px;">
+                            <!-- Las miniaturas aparecerán aquí -->
+                        </div>
+
+                        <!-- Visor de imagen (se llena al cliquear una miniatura) -->
+                        <div id="bestiaryViewer" style="display: none; padding-top: 15px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 id="bestiaryViewerName" style="margin: 0; border: none;">Nombre</h4>
+                                <button id="closeBestiaryViewerBtn" class="delete-state-btn">×</button>
+                            </div>
+                            <div id="bestiaryImageContainer"
+                                style="width: 100%; border: 1px solid var(--text-gold); border-radius: 5px; overflow: hidden; background: #000;">
+                                <img id="bestiaryFullImage" src="" style="width: 100%; display: block; cursor: zoom-in;"
+                                    onclick="window.open(this.src)">
+                            </div>
+                            <p
+                                style="font-size: 0.8em; color: #888; font-style: italic; margin-top: 5px; text-align: center;">
+                                Haz clic en la imagen para abrirla en grande</p>
+                        </div>
+                    </div>
                 </div>
                 <nav class="panel-nav">
                     <ul>
@@ -1219,6 +1251,8 @@
                                     class="nav-icon icon-doors"></span></button></li>
                         <li><button class="panel-nav-button" data-view="right-view-ambiance" title="Ambientación"><span
                                     class="nav-icon icon-ambiance"></span></button></li>
+                        <li><button class="panel-nav-button" data-view="right-view-bestiary" title="Bestiario"><span
+                                    class="nav-icon icon-enemy-type"></span></button></li>
                     </ul>
                 </nav>
             </div>
@@ -1437,6 +1471,32 @@
         </div>
     </div>
 
+    <!-- Modal Añadir Criatura al Bestiario -->
+    <div id="addCreatureModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Añadir al Bestiario</h3>
+            <div class="form-group">
+                <label for="creatureName">Nombre de la Criatura:*</label>
+                <input type="text" id="creatureName" placeholder="Ej: Dragón Rojo Adulto">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Imagen Personaje/Arte:</label>
+                    <input type="file" id="creatureImgPersonaje" accept="image/*" class="hidden-file-input">
+                    <label for="creatureImgPersonaje" class="custom-file-upload-btn small-btn">Subir Arte</label>
+                </div>
+                <div class="form-group">
+                    <label>Imagen Datos/Stats:</label>
+                    <input type="file" id="creatureImgDatos" accept="image/*" class="hidden-file-input">
+                    <label for="creatureImgDatos" class="custom-file-upload-btn small-btn">Subir Stats</label>
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="saveCreatureBtn">Guardar en Bestiario</button>
+                <button id="cancelCreatureBtn" class="secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
     <audio id="damage-sound" src="https://www.myinstants.com/media/sounds/crap-dnd-song.mp3" preload="auto"></audio>
     <audio id="heal-sound" src="https://www.myinstants.com/media/sounds/crap-dnd-song.mp3" preload="auto"></audio>
