@@ -1248,7 +1248,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="saveSceneModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Guardar Escena</h3><label for="sceneNameInput">Nombre:</label><input type="text" id="sceneNameInput"
@@ -1290,6 +1290,19 @@
                         <option value="weapon">Arma</option>
                         <option value="armor">Armadura</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- NUEVA SECCIÓN: Campos específicos para Arma -->
+            <div id="weaponFields" class="form-row"
+                style="display: none; background: rgba(140, 45, 45, 0.1); padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid rgba(230, 194, 83, 0.3);">
+                <div class="form-group">
+                    <label for="inventoryItemBonif">Bonif. Ataque:</label>
+                    <input type="text" id="inventoryItemBonif" placeholder="+5">
+                </div>
+                <div class="form-group">
+                    <label for="inventoryItemDamage">Daño / Tipo:</label>
+                    <input type="text" id="inventoryItemDamage" placeholder="1d8 + 3 Cortante">
                 </div>
             </div>
 

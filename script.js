@@ -1288,6 +1288,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const itemTypeClass = `item-type-${item.itemType || 'other'}`;
             const itemTypeText = (item.itemType === 'weapon') ? 'Arma' : (item.itemType === 'armor') ? 'Armadura' : 'Otro';
+            // Generar HTML de estadísticas si es arma
+            const weaponStatsHTML = (item.itemType === 'weapon') ? `
+                <div class="item-weapon-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Bonif</span>
+                        <span class="stat-value">${item.bonif || '+0'}</span>
+                    </div>
+                    <div class="stat-box" style="flex-grow:1;">
+                        <span class="stat-label">Daño</span>
+                        <span class="stat-value">${item.damage || '---'}</span>
+                    </div>
+                </div>
+            ` : '';
 
             const imageContent = item.image
                 ? `<img src="${item.image}" alt="${item.name}" class="item-image">`
@@ -1306,6 +1319,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="item-info">
                     <div class="item-type-indicator ${itemTypeClass}">${itemTypeText}</div>
                     <h3 class="item-name">${item.name}</h3>
+                    ${weaponStatsHTML}
                     <p class="item-description">${item.description || 'Sin descripción.'}</p>
                 </div>
                 
@@ -1616,6 +1630,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     searchAbilitiesInput.addEventListener('input', () => filterInfoList(searchAbilitiesInput, editAbilitiesList));
     searchInventoryInput.addEventListener('input', () => { filterList(searchInventoryInput, editInventoryList); });
+    // Mostrar u ocultar campos de arma según el tipo seleccionado en el modal
+    inventoryItemType.addEventListener('change', () => {
+        const weaponFields = document.getElementById('weaponFields');
+        weaponFields.style.display = inventoryItemType.value === 'weapon' ? 'flex' : 'none';
+    });
+
     function handleExportScene() {
         if (!isMapLoaded) {
             showCustomModal({
@@ -2063,8 +2083,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openInventoryItemModal(index = null) {
         if (!selectedTokenId) return;
-
         editingItemIndex = index;
+        const weaponFields = document.getElementById('weaponFields');
 
         if (index !== null) {
             // -- MODO EDICIÓN --
@@ -2082,6 +2102,13 @@ document.addEventListener('DOMContentLoaded', () => {
             inventoryItemPlaceholder.value = item.placeholder || '';
             inventoryItemIsMagical.checked = item.isMagical || false;
 
+            // Cargar campos de arma (si existen)
+            document.getElementById('inventoryItemBonif').value = item.bonif || '';
+            document.getElementById('inventoryItemDamage').value = item.damage || '';
+
+            // Mostrar u ocultar sección de arma
+            weaponFields.style.display = (item.itemType === 'weapon') ? 'flex' : 'none';
+
         } else {
             // -- MODO AÑADIR --
             inventoryModalTitle.textContent = 'Añadir Objeto al Inventario';
@@ -2093,6 +2120,11 @@ document.addEventListener('DOMContentLoaded', () => {
             inventoryItemImage.value = '';
             inventoryItemPlaceholder.value = '';
             inventoryItemIsMagical.checked = false;
+
+            // Limpiar y ocultar campos de arma
+            document.getElementById('inventoryItemBonif').value = '';
+            document.getElementById('inventoryItemDamage').value = '';
+            weaponFields.style.display = 'none';
         }
 
         inventoryItemModal.classList.add('open');
@@ -2119,7 +2151,9 @@ document.addEventListener('DOMContentLoaded', () => {
             weight: inventoryItemWeight.value.trim(),
             image: inventoryItemImage.value.trim(),
             placeholder: inventoryItemPlaceholder.value.trim(),
-            isMagical: inventoryItemIsMagical.checked
+            isMagical: inventoryItemIsMagical.checked,
+            bonif: document.getElementById('inventoryItemBonif').value.trim(),
+            damage: document.getElementById('inventoryItemDamage').value.trim()
         };
 
         if (editingItemIndex !== null) {
