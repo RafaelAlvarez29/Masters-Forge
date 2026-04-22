@@ -119,6 +119,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmInventoryItemBtn = document.getElementById('confirmInventoryItemBtn');
     const cancelInventoryItemBtn = document.getElementById('cancelInventoryItemBtn');
     let editingItemIndex = null; // Para saber si estamos añadiendo o editando
+    let tempInventoryImageBase64 = null; // Almacena temporalmente la imagen subida desde PC
+
+    // Manejador para cargar imagen de inventario desde archivo
+    document.getElementById('inventoryItemFile').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('inventoryFileName').textContent = file.name;
+            tempInventoryImageBase64 = await processImage(file); // Reutiliza tu función de procesar imagen
+            document.getElementById('inventoryItemImage').value = ''; // Limpia el link si sube un archivo
+        }
+    });
     const editAbilitiesList = document.getElementById('editAbilitiesList');
     const editInventoryList = document.getElementById('editInventoryList');
     const searchAbilitiesInput = document.getElementById('searchAbilitiesInput');
@@ -2084,6 +2095,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function openInventoryItemModal(index = null) {
         if (!selectedTokenId) return;
         editingItemIndex = index;
+        tempInventoryImageBase64 = null; // Resetear la imagen temporal cada vez que se abre el modal
+        document.getElementById('inventoryFileName').textContent = 'Ningún archivo cargado';
         const weaponFields = document.getElementById('weaponFields');
 
         if (index !== null) {
@@ -2149,7 +2162,8 @@ document.addEventListener('DOMContentLoaded', () => {
             description: inventoryItemDescription.value.trim(),
             price: inventoryItemPrice.value.trim(),
             weight: inventoryItemWeight.value.trim(),
-            image: inventoryItemImage.value.trim(),
+            // Si hay una imagen subida desde PC, usa esa. Si no, usa el link.
+            image: tempInventoryImageBase64 ? tempInventoryImageBase64 : inventoryItemImage.value.trim(),
             placeholder: inventoryItemPlaceholder.value.trim(),
             isMagical: inventoryItemIsMagical.checked,
             bonif: document.getElementById('inventoryItemBonif').value.trim(),

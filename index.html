@@ -1325,11 +1325,21 @@
 
             <div class="form-row">
                 <div class="form-group" style="flex-grow: 2;">
-                    <label for="inventoryItemImage">URL de la Imagen (Opcional)</label>
-                    <input type="text" id="inventoryItemImage" placeholder="https://...">
+                    <label>Imagen del Objeto:</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="inventoryItemImage" placeholder="Link de imagen..."
+                            style="flex-grow: 1; margin-bottom: 0;">
+                        <span style="color: var(--text-gold);">o</span>
+                        <input type="file" id="inventoryItemFile" accept="image/*" class="hidden-file-input">
+                        <label for="inventoryItemFile" class="custom-file-upload-btn small-btn"
+                            style="margin-bottom: 0; white-space: nowrap;">Subir Archivo</label>
+                    </div>
+                    <small id="inventoryFileName"
+                        style="display: block; color: #888; font-style: italic; margin-top: 5px;">Ningún archivo
+                        cargado</small>
                 </div>
                 <div class="form-group" style="flex-grow: 1;">
-                    <label for="inventoryItemPlaceholder">Emoji (si no hay imagen)</label>
+                    <label for="inventoryItemPlaceholder">Emoji / Icono:</label>
                     <input type="text" id="inventoryItemPlaceholder" placeholder="⚔️" maxlength="2">
                 </div>
             </div>
